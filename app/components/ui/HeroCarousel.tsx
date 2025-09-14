@@ -5,6 +5,7 @@ import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import Image from "next/image";
 import ImageSlider from "../../../public/announce-wan-2-2-image.webp";
+
 const slides = [
   {
     title: "WAN 2.2",
@@ -19,10 +20,9 @@ const slides = [
     subtitle: "Open Source Model",
     description:
       "We're making the weights to our FLUX.1 Krea model open-source. Download and run our model weights, read the technical report, or generate with it in Krea Image.",
-    img: ImageSlider, // Use a valid image instead of a video
+    img: ImageSlider,
     cta: "Read More",
   },
-  // add more slides as needed
 ];
 
 export default function HeroCarousel() {
@@ -50,7 +50,11 @@ export default function HeroCarousel() {
                 className="object-cover"
                 priority={i === 0}
               />
-              <div className="absolute inset-0 bg-black/40 flex justify-between items-end p-8 text-white">
+              {/* Overlay with theme-aware text */}
+              <div
+                className="absolute inset-0 flex justify-between items-end p-8 
+                              bg-black/40 dark:bg-black/50 text-foreground"
+              >
                 <div>
                   <p className="uppercase text-xs tracking-wider mb-2">
                     {s.subtitle}
@@ -58,7 +62,10 @@ export default function HeroCarousel() {
                   <h2 className="text-4xl font-bold">{s.title}</h2>
                   <p className="mt-2 max-w-lg">{s.description}</p>
                 </div>
-                <button className="mt-4 rounded-full bg-white text-black px-4 py-2 text-sm hover:bg-gray-200">
+                <button
+                  className="mt-4 rounded-full bg-background px-4 py-2 text-sm 
+                             text-foreground hover:bg-foreground hover:text-background transition-colors"
+                >
                   {s.cta}
                 </button>
               </div>

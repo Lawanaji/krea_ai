@@ -26,14 +26,10 @@ function FeatureCardBase({
       onClick={onClick}
       aria-label={`Open ${title}`}
       className={cn(
-        // layout
-        "group flex w-full items-start justify-between rounded-xl p-3 text-left shadow-sm border border-transparent",
-        // light theme
-        "bg-white hover:border-gray-300",
-        // dark theme
-        "dark:bg-[#202020] dark:hover:border-gray-600",
-        // animation
-        "transition-colors"
+        // base layout
+        "group flex w-full items-start justify-between rounded-xl p-3 text-left shadow-sm border border-transparent transition-colors",
+        // use theme variables instead of fixed grays
+        "bg-background text-foreground hover:border-gray-300 dark:hover:border-gray-600"
       )}
     >
       <div className="flex flex-1 gap-3">
@@ -49,9 +45,7 @@ function FeatureCardBase({
 
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-              {title}
-            </h3>
+            <h3 className="text-sm font-semibold text-foreground">{title}</h3>
             {badge && (
               <span className="rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-medium text-white">
                 {badge}
@@ -59,7 +53,7 @@ function FeatureCardBase({
             )}
           </div>
 
-          <p className="text-xs text-gray-600 dark:text-gray-300 leading-snug">
+          <p className="text-xs text-foreground/70 leading-snug">
             {description}
           </p>
         </div>
@@ -72,5 +66,4 @@ function FeatureCardBase({
   );
 }
 
-// Memoize to avoid unnecessary re-renders when props don’t change
 export default React.memo(FeatureCardBase);
