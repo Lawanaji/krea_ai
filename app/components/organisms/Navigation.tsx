@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -13,19 +13,45 @@ import {
   X,
   Sun,
   Moon,
-  Gem,
+  Bell,
 } from "lucide-react";
-import { CompassTool, FolderSimple } from "@phosphor-icons/react";
+import {
+  CompassTool,
+  FolderSimple,
+  Headset,
+  ImageSquare,
+} from "@phosphor-icons/react";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import logo from "../../../public/images.png";
-import { Button } from "../atoms/Buttons";
 
 export default function Navigation() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const { theme, setTheme } = useTheme();
-
+  const [dark, setDark] = useState(false);
+  useEffect(() => {
+    const root = document.documentElement;
+    if (
+      localStorage.theme === "dark" ||
+      (!("theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      root.classList.add("dark");
+      setDark(true);
+    }
+  }, []);
+  const toggle = () => {
+    const root = document.documentElement;
+    if (dark) {
+      root.classList.remove("dark");
+      localStorage.theme = "light";
+    } else {
+      root.classList.add("dark");
+      localStorage.theme = "dark";
+    }
+    setDark(!dark);
+  };
   const navItems = [
     { name: "Home", path: "/", icon: <Home size={20} /> },
     { name: "Image", path: "/image", icon: <ImageIcon size={20} /> },
@@ -52,12 +78,19 @@ export default function Navigation() {
           href={path}
           className={`group flex flex-col items-center gap-1 transition-colors ${
             active
-              ? "text-black rounded-xl bg-gray-100 p-3 text-sm"
+              ? "text-black rounded-xl bg-gray-100 p-3 text-sm dark:text-white dark:bg-gray-700"
               : "text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
           }`}
         >
           {icon}
-          <span className="hidden group-hover:block group-focus-visible:block absolute -bottom-10 rounded-md bg-[#202020] px-2 py-1 text-xs text-white">
+          <span
+            className="
+               absolute -bottom-10 
+              rounded-md bg-[#202020] px-2 py-1 text-xs text-white opacity-0
+              transition-all duration-200 ease-out
+              group-hover:opacity-100 group-hover:translate-y-3
+            "
+          >
             {name}
           </span>
         </Link>
@@ -66,7 +99,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-white dark:bg-background ">
+    <nav className=" fixed top-0 left-0 z-50 w-full ">
       <div className="mx-auto flex items-center justify-between p-5">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
@@ -80,7 +113,7 @@ export default function Navigation() {
           />
         </Link>
 
-        {/* Center nav */}
+        {/* Desktop nav */}
         <ul className="hidden md:flex items-center gap-8 rounded-2xl bg-white dark:bg-[#202020] px-6 py-2 shadow-md">
           {navItems.map((item) => (
             <Navlink key={item.path} {...item} />
@@ -88,24 +121,29 @@ export default function Navigation() {
         </ul>
 
         {/* Right actions */}
-        <div className="flex items-center gap-3 self-center">
+        <div className="hidden  md:flex items-center gap-3 self-center">
           <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="rounded-md bg-gray-100 p-2 hover:bg-gray-200 dark:bg-background dark:hover:bg-background"
+            className="rounded-md bg-gray-100 px-3 py-1 flex items-center gap-2 text-sm text-gray-700 hover:bg-gray-200 dark:bg-[#202020] dark:text-gray-200 dark:hover:bg-gray-700"
+            onClick={() => alert("Gallery clicked")}
+          >
+            <ImageSquare size={30} />
+            Gallery
+          </button>
+          <button
+            className="rounded-md flex items-center gap-1 bg-gray-100 px-3 py-1 text-sm text-gray-700 hover:bg-gray-200 dark:bg-[#202020] dark:text-gray-200 dark:hover:bg-gray-700"
+            onClick={() => alert("Support clicked")}
+          >
+            <Headset size={30} />
+            Support
+          </button>
+          <button
+            onClick={toggle}
+            className="rounded-md bg-gray-100 px-3 py-1 hover:bg-gray-200 dark:bg-background dark:hover:bg-gray-700"
             aria-label="Toggle dark mode"
           >
             {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
           </button>
-          <button
-            className="rounded-md bg-gray-100 px-3 py-1 text-sm text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-            onClick={() => alert("Profile clicked")}
-          >
-            <Gem size={30} /> Upgrade Now
-          </button>
-          <button className="" onClick={() => alert("Settings clicked")}>
-            Settings
-          </button>
-          <Button size="lg" title="sign up" children={undefined} />
+          <Bell size={20} className="text-[#202020] dark:text-gray-300" />
         </div>
 
         {/* Mobile toggle */}
@@ -118,19 +156,38 @@ export default function Navigation() {
         </button>
       </div>
 
-      {/* Mobile menu */}
-      {open && (
-        <ul className="flex flex-col gap-4 border-t bg-white px-4 py-4 dark:bg-gray-900 md:hidden">
+      {/* Mobile drawer with slide animation */}
+      <div
+        className={`fixed top-0 left-0 z-40 h-full w-64 transform border-r
+          bg-white dark:bg-[#202020]
+          transition-transform duration-300 ease-in-out
+          ${open ? "translate-x-0" : "-translate-x-full"}
+        `}
+      >
+        <div className="p-5 flex justify-between items-center border-b dark:border-gray-700">
+          <span className="font-semibold text-gray-700 dark:text-gray-100">
+            Menu
+          </span>
+          <button
+            onClick={() => setOpen(false)}
+            className="text-gray-700 dark:text-gray-200"
+            aria-label="Close menu"
+          >
+            <X size={24} />
+          </button>
+        </div>
+
+        <ul className="flex flex-col gap-4 px-4 py-6">
           {navItems.map(({ name, path, icon }) => {
             const active = pathname === path;
             return (
               <li key={path}>
                 <Link
                   href={path}
-                  className={`flex items-center gap-2 transition-colors ${
+                  className={`flex items-center gap-2 py-2 transition-colors ${
                     active
                       ? "text-blue-600 dark:text-blue-400"
-                      : "text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                      : "text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                   }`}
                   onClick={() => setOpen(false)}
                 >
@@ -141,18 +198,18 @@ export default function Navigation() {
             );
           })}
 
-          <div className="mt-4 flex flex-col gap-3">
+          <div className="mt-6 flex flex-col gap-3">
             <button
               className="rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-              onClick={() => alert("Profile clicked")}
+              onClick={() => alert("Gallery clicked")}
             >
-              Profile
+              <ImageSquare size={24} /> Gallery
             </button>
             <button
               className="rounded-md bg-gray-100 px-3 py-2 text-sm text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-              onClick={() => alert("Settings clicked")}
+              onClick={() => alert("Support clicked")}
             >
-              Settings
+              <Headset size={24} /> Support
             </button>
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
@@ -162,7 +219,7 @@ export default function Navigation() {
             </button>
           </div>
         </ul>
-      )}
+      </div>
     </nav>
   );
 }
