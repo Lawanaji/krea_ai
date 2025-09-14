@@ -1,6 +1,6 @@
 "use client";
 
-import { Image, Video, Mic, Wand, Edit, Move, Film, Bot } from "lucide-react";
+import { Image, Mic, Wand, Edit, Move, Film, Bot } from "lucide-react";
 import FeatureCard from "./FeatureCard";
 
 const features = [
