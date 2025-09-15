@@ -1,5 +1,4 @@
-"use client";
-
+"use-client";
 import React from "react";
 import Navigation from "../components/organisms/Navigation";
 import Footer from "../components/organisms/Footer";
